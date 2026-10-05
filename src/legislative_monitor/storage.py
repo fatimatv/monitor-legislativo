@@ -93,6 +93,11 @@ class StateStore:
             "SELECT 1 FROM documents WHERE official_id = ? AND document_id = ? AND status = 'LISTO'", (official_id, document_id)
         ).fetchone() is not None
 
+    def has_pending_captcha_documents(self, official_id: str) -> bool:
+        return self.connection.execute(
+            "SELECT 1 FROM documents WHERE official_id = ? AND status = 'PENDIENTE_CAPTCHA'", (official_id,)
+        ).fetchone() is not None
+
     def set_status(self, official_id: str, status: str, error: str | None = None) -> None:
         self.connection.execute(
             "UPDATE propositions SET processing_status=?, last_error=? WHERE official_id=?", (status, error, official_id)

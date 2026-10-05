@@ -74,7 +74,13 @@ class MonitorPipeline:
         if self.store:
             is_new, changed = self.store.upsert_proposition(proposition)
             status = self.store.processing_status(proposition.official_id)
-        if not self.dry_run and not is_new and not changed and status == "PROCESADO":
+        if (
+            not self.dry_run
+            and not is_new
+            and not changed
+            and status == "PROCESADO"
+            and not self.store.has_pending_captcha_documents(proposition.official_id)
+        ):
             LOG.info("Sin cambios: %s", proposition.official_id)
             return
         try:
