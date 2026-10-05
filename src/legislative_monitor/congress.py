@@ -113,11 +113,18 @@ class CongressClient:
             raise CongressSourceError("Respuesta inesperada del detalle de expediente.")
         return data
 
-    def download_document(self, url: str, captcha_token: str) -> tuple[bytes, str]:
-        if not captcha_token:
-            raise CongressSourceError("El portal requiere CONGRESO_CAPTCHA_TOKEN para descargar documentos oficiales.")
-        response = self._request(url, headers={"X-Captcha-Token": captcha_token})
+    def download_document(self, url: str, captcha_token: str = "") -> tuple[bytes, str]:
+        """Descarga primero el archivo público oficial; el CAPTCHA queda solo como respaldo."""
+        try:
+            response = self._request(url)
+        except CongressSourceError:
+            if not captcha_token:
+                raise
+            response = self._request(url, headers={"X-Captcha-Token": captcha_token})
         if not isinstance(response, tuple):
-            raise CongressSourceError("Se esperaba un PDF, pero el servidor devolvió JSON.")
+            if captcha_token:
+                response = self._request(url, headers={"X-Captcha-Token": captcha_token})
+            if not isinstance(response, tuple):
+                raise CongressSourceError("Se esperaba un PDF público, pero el servidor devolvió JSON.")
         body, headers = response
         return body, headers.get("Content-Disposition", "")
