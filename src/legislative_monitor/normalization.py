@@ -47,12 +47,12 @@ def _walk_documents(value: Any, found: list[Document]) -> None:
         return
     if not isinstance(value, dict):
         return
-    identifier = value.get("archivoId") or value.get("idArchivo") or value.get("documentoId")
+    identifier = value.get("proyectoArchivoId") or value.get("archivoId") or value.get("idArchivo") or value.get("documentoId")
     uuid = value.get("uuid")
     link = value.get("enlace") or value.get("url")
     if link or identifier or uuid:
-        key = str(uuid or identifier or link)
-        url = str(link or (f"{API_URL}/archivo/uuid/{uuid}" if uuid else f"{API_URL}/archivo/{identifier}/pdf"))
+        key = str(identifier or uuid or link)
+        url = str(link or (f"{API_URL}/archivo/{identifier}/pdf" if identifier else f"{API_URL}/archivo/uuid/{uuid}"))
         label = str(value.get("descripcion") or value.get("nombre") or value.get("tipo") or "documento")
         if not any(document.official_id == key for document in found):
             found.append(Document(key, label, url, "anexo" if "anexo" in label.casefold() else "documento"))
