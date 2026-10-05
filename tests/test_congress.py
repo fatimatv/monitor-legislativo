@@ -21,4 +21,4 @@ class CongressDocumentTests(unittest.TestCase):
 
         self.assertTrue(body.startswith(b"%PDF"))
         self.assertEqual(filename, "attachment; filename=proyecto.pdf")
-        self.assertEqual(client.calls, [{}])
+        self.assertEqual(client.calls, [{"Accept": "application/pdf"}])
