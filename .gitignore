@@ -8,3 +8,5 @@ work/*.sqlite
 .pytest_cache/
 build/
 *.egg-info/
+
+.vercel
