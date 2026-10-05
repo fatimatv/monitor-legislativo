@@ -20,3 +20,9 @@ class NormalizationTests(unittest.TestCase):
         item = normalize_project(json.loads((ROOT / "tests/fixtures/list_response.json").read_text(encoding="utf-8")))
         attach_detail(item, {"adjuntos": [{"archivoId": 99, "descripcion": "Texto principal"}]})
         self.assertTrue(item.documents[0].original_url.endswith("/archivo/99/pdf"))
+
+    def test_prefers_public_numeric_project_file_id_over_uuid(self):
+        item = normalize_project(json.loads((ROOT / "tests/fixtures/list_response.json").read_text(encoding="utf-8")))
+        attach_detail(item, {"archivos": [{"proyectoArchivoId": 414670, "uuid": "a-uuid", "descripcion": "PL principal"}]})
+        self.assertEqual(item.documents[0].official_id, "414670")
+        self.assertTrue(item.documents[0].original_url.endswith("/archivo/414670/pdf"))
