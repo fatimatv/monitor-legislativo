@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "monitor-legislativo-digital"
+version = "0.1.0"
+description = "Monitor idempotente de proposiciones legislativas digitales del Congreso del Perú"
+requires-python = ">=3.11"
+dependencies = [
+  "pycryptodome>=3.20",
+  "pypdf>=5.0",
+  "google-api-python-client>=2.140",
+  "google-auth>=2.34",
+]
+
+[project.scripts]
+monitor-legislativo = "legislative_monitor.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

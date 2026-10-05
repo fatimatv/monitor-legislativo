@@ -1,0 +1,13 @@
+{
+  "topics": [
+    {"name": "Inteligencia artificial", "keywords": ["inteligencia artificial", "ia generativa", "machine learning", "aprendizaje automático", "algoritmo", "algorítmico", "sistema automatizado", "decisiones automatizadas"]},
+    {"name": "Datos y privacidad", "keywords": ["datos personales", "protección de datos", "privacidad", "tratamiento de datos", "base de datos", "biometr", "reconocimiento facial"]},
+    {"name": "Identidad y confianza digital", "keywords": ["identidad digital", "identidad electrónica", "firma digital", "firma electrónica", "certificado digital"]},
+    {"name": "Telecomunicaciones e infraestructura", "keywords": ["telecomunic", "internet", "conectividad", "espectro radioeléctrico", "infraestructura digital", "centro de datos", "computación en la nube", "cloud"]},
+    {"name": "Ciberseguridad y delitos informáticos", "keywords": ["ciberseguridad", "seguridad de la información", "ciberdelincuencia", "delito informático", "fraude informático", "cibercrimen"]},
+    {"name": "Plataformas y comercio digital", "keywords": ["plataforma digital", "redes sociales", "comercio electrónico", "marketplace", "intermediario digital", "contenido digital", "moderación de contenido", "publicidad digital"]},
+    {"name": "Finanzas digitales", "keywords": ["fintech", "pago digital", "banca digital", "servicio financiero digital", "criptoactivo"]},
+    {"name": "Gobierno digital", "keywords": ["gobierno digital", "interoperabilidad", "digitalización", "servicio público digital", "datos abiertos", "open data"]}
+  ],
+  "negative_context": ["infraestructura vial", "conmemoración", "día nacional", "reconocimiento simbólico"]
+}

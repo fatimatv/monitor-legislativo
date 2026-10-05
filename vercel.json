@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/**/*.py": {
+      "maxDuration": 10,
+      "excludeFiles": "{tests/**,build/**,.venv/**,downloads/**,data/**}"
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/health",
+      "headers": [{"key": "X-Content-Type-Options", "value": "nosniff"}]
+    }
+  ]
+}

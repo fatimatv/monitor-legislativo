@@ -1,0 +1,23 @@
+name: Monitor legislativo diario
+
+on:
+  schedule:
+    # 11:00 America/Lima (UTC-5); ajustar si Perú cambia de zona horaria.
+    - cron: "0 16 * * *"
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      - run: monitor-legislativo daily
+        env:
+          GOOGLE_SERVICE_ACCOUNT_FILE: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_FILE }}
+          GOOGLE_DRIVE_ROOT_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_ROOT_FOLDER_ID }}
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          CONGRESO_CAPTCHA_TOKEN: ${{ secrets.CONGRESO_CAPTCHA_TOKEN }}
