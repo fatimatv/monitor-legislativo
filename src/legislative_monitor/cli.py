@@ -55,7 +55,12 @@ def main() -> None:
     workspace = None
     if not dry_run and all([settings.google_service_account_file, settings.google_drive_root_folder_id, settings.google_sheet_id]):
         try:
-            workspace = GoogleWorkspace(settings.google_service_account_file, settings.google_drive_root_folder_id, settings.google_sheet_id)
+            workspace = GoogleWorkspace(
+                settings.google_service_account_file,
+                settings.google_drive_root_folder_id,
+                settings.google_sheet_id,
+                settings.google_sheet_tab,
+            )
         except GoogleWorkspaceError as exc:
             logging.getLogger(__name__).warning("Google Workspace no disponible: %s", exc)
     elif not dry_run:

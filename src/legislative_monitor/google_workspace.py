@@ -20,7 +20,7 @@ class GoogleWorkspaceError(RuntimeError):
 
 
 class GoogleWorkspace:
-    def __init__(self, service_account_file: str, root_folder_id: str, sheet_id: str):
+    def __init__(self, service_account_file: str, root_folder_id: str, sheet_id: str, worksheet: str = "Iniciativas"):
         try:
             from google.oauth2.service_account import Credentials
             from googleapiclient.discovery import build
@@ -34,6 +34,7 @@ class GoogleWorkspace:
         self.sheets = build("sheets", "v4", credentials=credentials, cache_discovery=False)
         self.root_folder_id = root_folder_id
         self.sheet_id = sheet_id
+        self.worksheet = worksheet
 
     def _find_or_create_folder(self, name: str, parent_id: str, stable_key: str) -> str:
         query = f"'{parent_id}' in parents and trashed=false and appProperties has {{ key='monitor_key' and value='{stable_key}' }}"
@@ -62,7 +63,7 @@ class GoogleWorkspace:
         return self.drive.files().create(body=metadata, media_body=MediaFileUpload(document.local_path, mimetype="application/pdf"), fields="id").execute()["id"]
 
     def upsert_sheet_row(self, proposition: Proposition, drive_folder_url: str, download_link: str) -> None:
-        worksheet = "Iniciativas"
+        worksheet = getattr(self, "worksheet", "Iniciativas")
         metadata = self.sheets.spreadsheets().get(spreadsheetId=self.sheet_id).execute()
         names = {sheet["properties"]["title"] for sheet in metadata.get("sheets", [])}
         if worksheet not in names:

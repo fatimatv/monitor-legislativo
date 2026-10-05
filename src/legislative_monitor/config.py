@@ -18,6 +18,7 @@ class Settings:
     google_service_account_file: str | None
     google_drive_root_folder_id: str | None
     google_sheet_id: str | None
+    google_sheet_tab: str
     captcha_token: str | None
 
     @classmethod
@@ -34,6 +35,7 @@ class Settings:
             google_service_account_file=os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE"),
             google_drive_root_folder_id=os.getenv("GOOGLE_DRIVE_ROOT_FOLDER_ID") or None,
             google_sheet_id=os.getenv("GOOGLE_SHEET_ID") or None,
+            google_sheet_tab=os.getenv("GOOGLE_SHEET_TAB", "Iniciativas"),
             captcha_token=os.getenv("CONGRESO_CAPTCHA_TOKEN") or None,
         )
 
