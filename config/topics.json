@@ -1,13 +1,16 @@
 {
   "topics": [
-    {"name": "Inteligencia artificial", "keywords": ["inteligencia artificial", "ia generativa", "machine learning", "aprendizaje automático", "algoritmo", "algorítmico", "sistema automatizado", "decisiones automatizadas"]},
+    {"name": "Inteligencia artificial", "keywords": ["inteligencia artificial", "ia generativa", "machine learning", "aprendizaje automático", "algoritmo", "algorítmico", "sistema automatizado", "decisiones automatizadas", "sistema algorítmico", "modelo de inteligencia artificial"]},
     {"name": "Datos y privacidad", "keywords": ["datos personales", "protección de datos", "privacidad", "tratamiento de datos", "base de datos", "biometr", "reconocimiento facial", "videovigilancia", "videovigilancia vehicular", "tacógrafo digital", "tacografo digital", "grabaciones vehiculares"]},
-    {"name": "Identidad y confianza digital", "keywords": ["identidad digital", "identidad electrónica", "firma digital", "firma electrónica", "certificado digital"]},
-    {"name": "Telecomunicaciones e infraestructura", "keywords": ["telecomunic", "internet", "conectividad", "espectro radioeléctrico", "infraestructura digital", "centro de datos", "computación en la nube", "cloud"]},
+    {"name": "Identidad y confianza digital", "keywords": ["identidad digital", "identidad electrónica", "firma digital", "firma electrónica", "firmar electrónicamente", "firma electrónica avanzada", "certificado digital"]},
+    {"name": "Telecomunicaciones e infraestructura", "keywords": ["telecomunic", "internet", "acceso a internet", "conectividad", "conectividad digital", "banda ancha", "espectro radioeléctrico", "infraestructura digital", "red digital", "centro de datos", "computación en la nube", "cloud"]},
     {"name": "Ciberseguridad y delitos informáticos", "keywords": ["ciberseguridad", "seguridad de la información", "ciberdelincuencia", "delito informático", "fraude informático", "cibercrimen"]},
     {"name": "Plataformas y comercio digital", "keywords": ["plataforma digital", "redes sociales", "comercio electrónico", "marketplace", "intermediario digital", "contenido digital", "moderación de contenido", "publicidad digital", "juegos a distancia", "apuestas deportivas a distancia", "juego a distancia", "apuesta deportiva a distancia"]},
-    {"name": "Finanzas digitales", "keywords": ["fintech", "pago digital", "banca digital", "servicio financiero digital", "criptoactivo"]},
+    {"name": "Finanzas digitales", "keywords": ["fintech", "paytech", "billetera digital", "billeteras digitales", "billetera electrónica", "dinero electrónico", "emoney", "e-money", "pago digital", "pagos digitales", "banca digital", "servicio financiero digital", "criptoactivo"]},
     {"name": "Gobierno digital", "keywords": ["gobierno digital", "interoperabilidad", "digitalización", "servicio público digital", "datos abiertos", "open data"]},
+    {"name": "Derechos digitales", "keywords": ["derechos digitales", "derecho digital", "ciudadanía digital", "libertad en internet", "accesibilidad digital"]},
+    {"name": "Aplicaciones y servicios digitales", "keywords": ["aplicación digital", "aplicaciones digitales", "aplicación móvil", "aplicaciones móviles", "app móvil", "servicio digital", "software como servicio"]},
+    {"name": "Transformación e innovación digital", "keywords": ["transformación digital", "innovación digital", "innovación tecnológica", "tecnologías emergentes", "ecosistema digital"]},
     {"name": "Servicios regulados y usuarios digitales", "keywords": ["servicios regulados", "servicios públicos regulados", "compensaciones automáticas", "interrupciones de servicios", "devoluciones automáticas"]}
   ],
   "negative_context": ["infraestructura vial", "conmemoración", "día nacional", "reconocimiento simbólico"]

@@ -10,13 +10,16 @@ from urllib.request import Request, urlopen
 API_BASE = "https://api.congreso.gob.pe/spley-portal-service"
 IALAW_LOGO = Path(__file__).resolve().parent.parent / "assets" / "ialaw-horizontal-blue-bg.png"
 TOPICS = {
-    "IA": ("inteligencia artificial", "ia generativa", "algoritmo", "automatizado"),
+    "IA": ("inteligencia artificial", "ia generativa", "algoritmo", "algorítmico", "automatizado"),
     "Datos": ("datos personales", "protección de datos", "privacidad", "biometr", "reconocimiento facial", "videovigilancia", "tacógrafo digital", "tacografo digital"),
     "Plataformas": ("redes sociales", "plataforma digital", "comercio electrónico", "marketplace", "juegos a distancia", "apuestas deportivas a distancia"),
     "Ciberseguridad": ("ciberseguridad", "ciberdelincuencia", "delito informático", "fraude informático"),
-    "Telecom": ("telecomunic", "internet", "conectividad", "espectro radioeléctrico"),
-    "Gobierno digital": ("gobierno digital", "interoperabilidad", "firma digital", "identidad digital"),
-    "Fintech": ("fintech", "pago digital", "banca digital", "criptoactivo"),
+    "Telecom": ("telecomunic", "internet", "acceso a internet", "conectividad", "banda ancha", "espectro radioeléctrico"),
+    "Gobierno digital": ("gobierno digital", "interoperabilidad", "firma digital", "firma electrónica", "firmar electrónicamente", "identidad digital"),
+    "Fintech": ("fintech", "paytech", "billetera digital", "billeteras digitales", "billetera electrónica", "dinero electrónico", "pago digital", "pagos digitales", "banca digital", "criptoactivo"),
+    "Derechos digitales": ("derechos digitales", "derecho digital", "ciudadanía digital", "libertad en internet", "accesibilidad digital"),
+    "Aplicaciones": ("aplicación digital", "aplicaciones digitales", "aplicación móvil", "aplicaciones móviles", "app móvil", "servicio digital", "software como servicio"),
+    "Transformación digital": ("transformación digital", "innovación digital", "innovación tecnológica", "tecnologías emergentes", "ecosistema digital"),
     "Servicios regulados": ("servicios regulados", "compensaciones automáticas", "interrupciones de servicios"),
 }
 
