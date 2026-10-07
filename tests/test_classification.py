@@ -25,3 +25,18 @@ class ClassificationTests(unittest.TestCase):
     def test_rejects_road_project_without_digital_context(self):
         result = RuleClassifier(load_topics(ROOT / "config/topics.json")).classify(project("Ley de infraestructura vial para rutas nacionales"))
         self.assertFalse(result.relevant)
+
+    def test_classifies_videovigilance_as_data_and_privacy(self):
+        result = RuleClassifier(load_topics(ROOT / "config/topics.json")).classify(project("Derecho de acceso a información de sistemas de videovigilancia vehicular"))
+        self.assertTrue(result.relevant)
+        self.assertIn("Datos y privacidad", result.categories)
+
+    def test_classifies_regulated_service_compensations_as_potential_digital_impact(self):
+        result = RuleClassifier(load_topics(ROOT / "config/topics.json")).classify(project("Compensaciones automáticas por interrupciones de servicios regulados"))
+        self.assertTrue(result.relevant)
+        self.assertIn("Servicios regulados y usuarios digitales", result.categories)
+
+    def test_classifies_remote_betting_as_digital_platform_market(self):
+        result = RuleClassifier(load_topics(ROOT / "config/topics.json")).classify(project("Impuesto a juegos a distancia y apuestas deportivas a distancia"))
+        self.assertTrue(result.relevant)
+        self.assertIn("Plataformas y comercio digital", result.categories)
