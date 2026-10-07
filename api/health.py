@@ -1,55 +1,54 @@
 from __future__ import annotations
 
-from datetime import date
+from concurrent.futures import ThreadPoolExecutor
+from datetime import date, timedelta
 from http.server import BaseHTTPRequestHandler
 import json
 from pathlib import Path
-from urllib.request import Request, urlopen
+import sys
 
 
-API_BASE = "https://api.congreso.gob.pe/spley-portal-service"
-IALAW_LOGO = Path(__file__).resolve().parent.parent / "assets" / "ialaw-horizontal-blue-bg.png"
-TOPICS = {
-    "IA": ("inteligencia artificial", "ia generativa", "algoritmo", "algorítmico", "automatizado"),
-    "Datos": ("datos personales", "protección de datos", "privacidad", "biometr", "reconocimiento facial", "videovigilancia", "tacógrafo digital", "tacografo digital"),
-    "Plataformas": ("redes sociales", "plataforma digital", "comercio electrónico", "marketplace", "juegos a distancia", "apuestas deportivas a distancia"),
-    "Ciberseguridad": ("ciberseguridad", "ciberdelincuencia", "delito informático", "fraude informático"),
-    "Telecom": ("telecomunic", "internet", "acceso a internet", "conectividad", "banda ancha", "espectro radioeléctrico"),
-    "Gobierno digital": ("gobierno digital", "interoperabilidad", "firma digital", "firma electrónica", "firmar electrónicamente", "identidad digital"),
-    "Fintech": ("fintech", "paytech", "billetera digital", "billeteras digitales", "billetera electrónica", "dinero electrónico", "pago digital", "pagos digitales", "banca digital", "criptoactivo"),
-    "Derechos digitales": ("derechos digitales", "derecho digital", "ciudadanía digital", "libertad en internet", "accesibilidad digital"),
-    "Aplicaciones": ("aplicación digital", "aplicaciones digitales", "aplicación móvil", "aplicaciones móviles", "app móvil", "servicio digital", "software como servicio"),
-    "Transformación digital": ("transformación digital", "innovación digital", "innovación tecnológica", "tecnologías emergentes", "ecosistema digital"),
-    "Servicios regulados": ("servicios regulados", "compensaciones automáticas", "interrupciones de servicios"),
-}
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE_ROOT = ROOT / "src"
+if str(SOURCE_ROOT) not in sys.path:
+    sys.path.insert(0, str(SOURCE_ROOT))
+
+from legislative_monitor.classification import RuleClassifier
+from legislative_monitor.config import load_topics
+from legislative_monitor.congress import CongressClient, CongressSourceError
+from legislative_monitor.normalization import attach_detail
 
 
-def official_json(url: str, payload: dict | None = None) -> dict:
-    body = json.dumps(payload).encode("utf-8") if payload else None
-    headers = {"Accept": "application/json", "User-Agent": "monitor-legislativo-vercel/0.1"}
-    if body:
-        headers["Content-Type"] = "application/json"
-    request = Request(url, data=body, headers=headers, method="POST" if body else "GET")
-    with urlopen(request, timeout=15) as response:
-        return json.loads(response.read().decode("utf-8"))
-
-
-def classify(title: str) -> list[str]:
-    text = title.casefold()
-    return [label for label, terms in TOPICS.items() if any(term in text for term in terms)]
+IALAW_LOGO = ROOT / "assets" / "ialaw-horizontal-blue-bg.png"
+TOPICS_PATH = ROOT / "config" / "topics.json"
+DASHBOARD_LOOKBACK_DAYS = 7
 
 
 def latest_projects() -> dict:
-    periods = official_json(f"{API_BASE}/periodo-parlamentario").get("data", [])
+    congress = CongressClient(timeout_seconds=15, max_retries=2, page_size=50)
+    periods = congress.periods()
     today = date.today()
     active = next((item for item in periods if date.fromisoformat(item["fecIni"][:10]) <= today <= date.fromisoformat(item["fecFin"][:10])), periods[0])
-    filters = {"perParId": active["perParId"], "codTipoParl": "D", "perLegId": None, "comisionId": None, "estadoId": None, "congresistaId": None, "grupoParlamentarioId": None, "proponenteId": None, "legislaturaId": None, "fecPresentacionDesde": None, "fecPresentacionHasta": None, "pleyNum": None, "palabras": None, "tipoFirmanteId": None, "conAcumulado": False, "pageSize": 50, "rowStart": 0}
-    result = official_json(f"{API_BASE}/proyecto-ley/lista-con-filtro", filters).get("data", {})
+    period = int(active["perParId"])
+    _, total = congress.search_page(period)
+    initiatives = list(congress.iter_projects(period, today - timedelta(days=DASHBOARD_LOOKBACK_DAYS)))
+    classifier = RuleClassifier(load_topics(TOPICS_PATH))
+
+    def detail_for(proposition):
+        try:
+            return proposition, congress.detail(proposition.parliamentary_period, proposition.number, proposition.chamber_code)
+        except CongressSourceError:
+            return proposition, None
+
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        details = list(executor.map(detail_for, initiatives))
     projects = []
-    for item in result.get("proyectos", []):
-        title = item.get("titulo", "").strip()
-        projects.append({"id": item.get("proyectoLey"), "date": item.get("fecPresentacion", "")[:10], "title": title, "status": item.get("desEstado", ""), "tags": classify(title), "url": f"https://wb2server.congreso.gob.pe/spley-portal/#/diputados/expediente/{item.get('perParId')}/{item.get('pleyNum')}"})
-    return {"period": active["desPerParAbrev"], "total": result.get("rowsTotal", 0), "projects": projects}
+    for proposition, detail in details:
+        if detail:
+            attach_detail(proposition, detail)
+        classification = classifier.classify(proposition)
+        projects.append({"id": proposition.official_id, "date": proposition.presented_on.isoformat() if proposition.presented_on else "", "title": proposition.title, "status": proposition.procedural_status, "tags": classification.categories if classification.relevant else [], "url": proposition.official_url})
+    return {"period": active["desPerParAbrev"], "total": total, "projects": projects}
 
 
 LANDING_PAGE = r"""<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IALAW · Radar Legislativo Digital</title><style>
