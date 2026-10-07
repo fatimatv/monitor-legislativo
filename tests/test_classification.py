@@ -48,3 +48,21 @@ class ClassificationTests(unittest.TestCase):
         result = RuleClassifier(load_topics(ROOT / "config/topics.json")).classify(project("Impuesto a juegos a distancia y apuestas deportivas a distancia"))
         self.assertTrue(result.relevant)
         self.assertIn("Plataformas y comercio digital", result.categories)
+
+    def test_classifies_requested_digital_economy_and_rights_terms(self):
+        classifier = RuleClassifier(load_topics(ROOT / "config/topics.json"))
+        cases = {
+            "Regulación de billeteras digitales y dinero electrónico": "Finanzas digitales",
+            "Estándares para servicios paytech": "Finanzas digitales",
+            "Garantías para los derechos digitales de los ciudadanos": "Derechos digitales",
+            "Protección de derechos en internet y conectividad rural": "Telecomunicaciones e infraestructura",
+            "Transparencia de algoritmos aplicados por el Estado": "Inteligencia artificial",
+            "Regulación de aplicaciones móviles de servicios públicos": "Aplicaciones y servicios digitales",
+            "Medidas para firmar electrónicamente documentos públicos": "Identidad y confianza digital",
+            "Estrategia nacional de transformación digital e innovación": "Transformación e innovación digital",
+        }
+        for title, category in cases.items():
+            with self.subTest(title=title):
+                result = classifier.classify(project(title))
+                self.assertTrue(result.relevant)
+                self.assertIn(category, result.categories)

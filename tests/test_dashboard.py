@@ -12,3 +12,10 @@ class DashboardTests(unittest.TestCase):
         self.assertIn('id="scope"', source)
         self.assertIn("let data=[],showAll=false", source)
         self.assertIn("showAll||p.tags.length", source)
+
+    def test_dashboard_taxonomy_includes_new_digital_search_terms(self):
+        source = (ROOT / "api" / "health.py").read_text(encoding="utf-8")
+
+        for term in ("billetera digital", "dinero electrónico", "paytech", "derechos digitales", "aplicación móvil", "transformación digital"):
+            with self.subTest(term=term):
+                self.assertIn(term, source)
