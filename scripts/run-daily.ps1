@@ -5,6 +5,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Set-Location $ProjectRoot
+$env:PYTHONPATH = (Join-Path $ProjectRoot 'src')
 
 if (-not (Test-Path '.venv\Scripts\python.exe')) {
     python -m venv .venv
