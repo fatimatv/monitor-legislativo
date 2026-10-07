@@ -11,12 +11,13 @@ API_BASE = "https://api.congreso.gob.pe/spley-portal-service"
 IALAW_LOGO = Path(__file__).resolve().parent.parent / "assets" / "ialaw-horizontal-blue-bg.png"
 TOPICS = {
     "IA": ("inteligencia artificial", "ia generativa", "algoritmo", "automatizado"),
-    "Datos": ("datos personales", "protección de datos", "privacidad", "biometr", "reconocimiento facial"),
-    "Plataformas": ("redes sociales", "plataforma digital", "comercio electrónico", "marketplace"),
+    "Datos": ("datos personales", "protección de datos", "privacidad", "biometr", "reconocimiento facial", "videovigilancia", "tacógrafo digital", "tacografo digital"),
+    "Plataformas": ("redes sociales", "plataforma digital", "comercio electrónico", "marketplace", "juegos a distancia", "apuestas deportivas a distancia"),
     "Ciberseguridad": ("ciberseguridad", "ciberdelincuencia", "delito informático", "fraude informático"),
     "Telecom": ("telecomunic", "internet", "conectividad", "espectro radioeléctrico"),
     "Gobierno digital": ("gobierno digital", "interoperabilidad", "firma digital", "identidad digital"),
     "Fintech": ("fintech", "pago digital", "banca digital", "criptoactivo"),
+    "Servicios regulados": ("servicios regulados", "compensaciones automáticas", "interrupciones de servicios"),
 }
 
 
