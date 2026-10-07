@@ -31,6 +31,14 @@ class ClassificationTests(unittest.TestCase):
         self.assertTrue(result.relevant)
         self.assertIn("Datos y privacidad", result.categories)
 
+    def test_classifies_term_found_in_official_summary_and_identifies_source(self):
+        item = project("Proposición sobre transporte terrestre")
+        item.source_data["detail"] = {"general": {"sumilla": "Regula el acceso a información de videovigilancia vehicular."}}
+        result = RuleClassifier(load_topics(ROOT / "config/topics.json")).classify(item)
+        self.assertTrue(result.relevant)
+        self.assertIn("Datos y privacidad", result.categories)
+        self.assertIn("sumilla oficial", result.rationale)
+
     def test_classifies_regulated_service_compensations_as_potential_digital_impact(self):
         result = RuleClassifier(load_topics(ROOT / "config/topics.json")).classify(project("Compensaciones automáticas por interrupciones de servicios regulados"))
         self.assertTrue(result.relevant)
