@@ -64,6 +64,11 @@ class MonitorPipeline:
     def _process(self, proposition: Proposition, summary: RunSummary) -> None:
         summary.found += 1
         summary.evaluated += 1
+        try:
+            detail = self.congress.detail(proposition.parliamentary_period, proposition.number, proposition.chamber_code)
+            attach_detail(proposition, detail)
+        except CongressSourceError as exc:
+            LOG.warning("Detalle pendiente para %s: %s", proposition.official_id, exc)
         proposition.classification = self.classifier.classify(proposition)
         if not proposition.classification.relevant:
             summary.discarded += 1
@@ -93,11 +98,6 @@ class MonitorPipeline:
                 self.store.set_status(proposition.official_id, "ERROR", str(exc)[:1000])
 
     def _enrich_and_sync(self, proposition: Proposition, summary: RunSummary) -> None:
-        try:
-            detail = self.congress.detail(proposition.parliamentary_period, proposition.number, proposition.chamber_code)
-            attach_detail(proposition, detail)
-        except CongressSourceError as exc:
-            LOG.warning("Detalle pendiente para %s: %s", proposition.official_id, exc)
         for document in proposition.documents:
             if self.store and self.store.document_known(proposition.official_id, document.official_id):
                 continue
