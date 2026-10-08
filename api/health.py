@@ -21,7 +21,7 @@ from legislative_monitor.normalization import attach_detail
 
 IALAW_LOGO = ROOT / "assets" / "ialaw-horizontal-blue-bg.png"
 TOPICS_PATH = ROOT / "config" / "topics.json"
-DASHBOARD_LOOKBACK_DAYS = 7
+DASHBOARD_LOOKBACK_DAYS = 14
 
 
 def latest_projects() -> dict:
