@@ -10,8 +10,8 @@ ROOT = Path(__file__).parents[1]
 
 
 class DashboardTests(unittest.TestCase):
-    def test_dashboard_keeps_two_weeks_of_recent_initiatives(self):
-        self.assertEqual(health.DASHBOARD_LOOKBACK_DAYS, 14)
+    def test_dashboard_keeps_current_legislative_period_initiatives(self):
+        self.assertEqual(health.DASHBOARD_LOOKBACK_DAYS, 90)
 
     def test_defaults_to_digital_signal_and_offers_all_initiatives_toggle(self):
         source = (ROOT / "api" / "health.py").read_text(encoding="utf-8")

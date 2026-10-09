@@ -66,3 +66,16 @@ class ClassificationTests(unittest.TestCase):
                 result = classifier.classify(project(title))
                 self.assertTrue(result.relevant)
                 self.assertIn(category, result.categories)
+
+    def test_classifies_communications_interception_digital_government_and_reniec(self):
+        classifier = RuleClassifier(load_topics(ROOT / "config/topics.json"))
+        cases = {
+            "Régimen de intervención de las comunicaciones en investigaciones penales": "Datos y privacidad",
+            "Gestión presidencial a través de tecnologías digitales": "Gobierno digital",
+            "Integración de inscripciones consulares al sistema registral del RENIEC": "Identidad y confianza digital",
+        }
+        for title, category in cases.items():
+            with self.subTest(title=title):
+                result = classifier.classify(project(title))
+                self.assertTrue(result.relevant)
+                self.assertIn(category, result.categories)
