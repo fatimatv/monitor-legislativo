@@ -37,6 +37,7 @@ class MonitorPipeline:
         store: StateStore | None,
         workspace: GoogleWorkspace | None,
         dry_run: bool,
+        download_documents: bool = True,
     ):
         self.congress = congress
         self.classifier = classifier
@@ -45,6 +46,7 @@ class MonitorPipeline:
         self.store = store
         self.workspace = workspace
         self.dry_run = dry_run
+        self.download_documents = download_documents
 
     def run(self, periods: list[int], start_date: date | None) -> RunSummary:
         summary = RunSummary()
@@ -98,18 +100,19 @@ class MonitorPipeline:
                 self.store.set_status(proposition.official_id, "ERROR", str(exc)[:1000])
 
     def _enrich_and_sync(self, proposition: Proposition, summary: RunSummary) -> None:
-        for document in proposition.documents:
-            if self.store and self.store.document_known(proposition.official_id, document.official_id):
-                continue
-            try:
-                self.documents.download(proposition, document)
-                summary.documents_downloaded += 1
-                if self.store:
-                    self.store.save_document(proposition.official_id, document.official_id, document.sha256, None, document.status)
-            except CongressSourceError as exc:
-                LOG.warning("Documento pendiente (%s): %s", document.official_id, exc)
-                if self.store:
-                    self.store.save_document(proposition.official_id, document.official_id, None, None, "PENDIENTE_CAPTCHA")
+        if self.download_documents:
+            for document in proposition.documents:
+                if self.store and self.store.document_known(proposition.official_id, document.official_id):
+                    continue
+                try:
+                    self.documents.download(proposition, document)
+                    summary.documents_downloaded += 1
+                    if self.store:
+                        self.store.save_document(proposition.official_id, document.official_id, document.sha256, None, document.status)
+                except CongressSourceError as exc:
+                    LOG.warning("Documento pendiente (%s): %s", document.official_id, exc)
+                    if self.store:
+                        self.store.save_document(proposition.official_id, document.official_id, None, None, "PENDIENTE_CAPTCHA")
         proposition.analysis = self.analyzer.analyze(proposition)
         if self.dry_run:
             LOG.info("DRY-RUN %s: %s", proposition.official_id, proposition.analysis.status)

@@ -31,6 +31,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("mode", choices=["daily", "backfill", "dry-run"])
     parser.add_argument("--start-date", type=date.fromisoformat, help="Fecha inicial YYYY-MM-DD (obligatoria en backfill)")
     parser.add_argument("--period", type=int, action="append", help="Período parlamentario; repetible")
+    parser.add_argument("--metadata-only", action="store_true", help="Sincroniza fichas sin intentar descargar anexos oficiales.")
     return parser.parse_args()
 
 
@@ -73,6 +74,7 @@ def main() -> None:
         store=store,
         workspace=workspace,
         dry_run=dry_run,
+        download_documents=not args.metadata_only,
     )
     try:
         summary = pipeline.run(periods, start_date)

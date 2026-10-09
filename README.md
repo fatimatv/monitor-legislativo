@@ -47,6 +47,9 @@ monitor-legislativo dry-run
 # Recorre los periodos que cubren la fecha. Requiere fecha explícita.
 monitor-legislativo backfill --start-date 2025-01-01
 
+# Recalcula y sincroniza fichas, sin bloquearse en adjuntos que el portal no permite descargar.
+monitor-legislativo backfill --start-date 2025-01-01 --metadata-only
+
 # Limita una prueba a un periodo.
 monitor-legislativo dry-run --period 2026
 ```
