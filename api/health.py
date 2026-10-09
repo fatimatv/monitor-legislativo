@@ -21,7 +21,7 @@ from legislative_monitor.normalization import attach_detail
 
 IALAW_LOGO = ROOT / "assets" / "ialaw-horizontal-blue-bg.png"
 TOPICS_PATH = ROOT / "config" / "topics.json"
-DASHBOARD_LOOKBACK_DAYS = 14
+DASHBOARD_LOOKBACK_DAYS = 90
 
 
 def latest_projects() -> dict:
@@ -40,7 +40,7 @@ def latest_projects() -> dict:
         except CongressSourceError:
             return proposition, None
 
-    with ThreadPoolExecutor(max_workers=6) as executor:
+    with ThreadPoolExecutor(max_workers=12) as executor:
         details = list(executor.map(detail_for, initiatives))
     projects = []
     for proposition, detail in details:
