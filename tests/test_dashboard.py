@@ -1,3 +1,4 @@
+import json
 import unittest
 from unittest.mock import patch
 from pathlib import Path
@@ -12,6 +13,11 @@ ROOT = Path(__file__).parents[1]
 class DashboardTests(unittest.TestCase):
     def test_dashboard_keeps_current_legislative_period_initiatives(self):
         self.assertEqual(health.DASHBOARD_LOOKBACK_DAYS, 90)
+
+    def test_vercel_allows_the_live_dashboard_query_to_complete(self):
+        config = json.loads((ROOT / "vercel.json").read_text(encoding="utf-8"))
+
+        self.assertGreaterEqual(config["functions"]["api/**/*.py"]["maxDuration"], 60)
 
     def test_defaults_to_digital_signal_and_offers_all_initiatives_toggle(self):
         source = (ROOT / "api" / "health.py").read_text(encoding="utf-8")
