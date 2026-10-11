@@ -12,4 +12,4 @@ if (-not (Test-Path '.venv\Scripts\python.exe')) {
     .\.venv\Scripts\python.exe -m pip install .
 }
 
-& .\.venv\Scripts\python.exe -m legislative_monitor daily
+& .\.venv\Scripts\python.exe -m legislative_monitor daily --metadata-only

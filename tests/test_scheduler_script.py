@@ -10,4 +10,5 @@ class SchedulerScriptTests(unittest.TestCase):
         source = (ROOT / "scripts" / "run-daily.ps1").read_text(encoding="utf-8")
 
         self.assertIn("$env:PYTHONPATH = (Join-Path $ProjectRoot 'src')", source)
+        self.assertIn("-m legislative_monitor daily --metadata-only", source)
 

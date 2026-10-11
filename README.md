@@ -54,7 +54,7 @@ monitor-legislativo backfill --start-date 2025-01-01 --metadata-only
 monitor-legislativo dry-run --period 2026
 ```
 
-`daily` usa `MONITOR_LOOKBACK_DAYS=7` por defecto. La deduplicación por hash permite una ventana solapada sin duplicar filas, carpetas ni documentos. `backfill` requiere fecha para impedir una carga histórica accidental.
+`daily` usa `MONITOR_LOOKBACK_DAYS=7` por defecto. La deduplicación por hash permite una ventana solapada sin duplicar filas, carpetas ni documentos. `backfill` requiere fecha para impedir una carga histórica accidental. La tarea programada usa `--metadata-only`: el registro de iniciativas, sus enlaces oficiales, el análisis y Sheets no deben quedar bloqueados por un adjunto temporalmente inaccesible.
 
 ## Google Drive y Google Sheets
 
@@ -68,7 +68,7 @@ Drive queda organizado como `raíz / 2026 / 00498-2026-2031-CD - título`. Cada 
 
 ### Documentos oficiales
 
-El portal exige un `X-Captcha-Token` válido para cada descarga. Defina temporalmente `CONGRESO_CAPTCHA_TOKEN` solo si dispone de una integración autorizada para obtenerlo. Nunca lo guarde en Git ni reutilice un token vencido. Sin token, se registra `PENDIENTE_CAPTCHA` y la sincronización de metadatos sigue siendo segura.
+El portal de archivos puede rechazar solicitudes automatizadas con `HTTP 406` o fallar temporalmente aunque el PDF se descargue desde el navegador. No se eluden esos controles. Cada ficha conserva el enlace oficial del documento y la tarea programada sincroniza los metadatos sin esperar el PDF. Los adjuntos solo se descargan cuando el servidor los entrega mediante un acceso autorizado.
 
 ## Automatización diaria recomendada
 

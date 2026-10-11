@@ -38,7 +38,15 @@ class CongressClient:
                     if content_type == "application/json":
                         return json.loads(response_body.decode("utf-8"))
                     return response_body, dict(response.headers.items())
-            except (HTTPError, URLError, TimeoutError) as exc:
+            except HTTPError as exc:
+                # A 4xx response (except rate limiting) is a definitive refusal for
+                # this request. Retrying the same document only delays the monitor.
+                if 400 <= exc.code < 500 and exc.code != 429:
+                    raise CongressSourceError(f"Error al consultar {url}: {exc}") from exc
+                if attempt + 1 == self.max_retries:
+                    raise CongressSourceError(f"Error al consultar {url}: {exc}") from exc
+                time.sleep(2**attempt)
+            except (URLError, TimeoutError, OSError) as exc:
                 if attempt + 1 == self.max_retries:
                     raise CongressSourceError(f"Error al consultar {url}: {exc}") from exc
                 time.sleep(2**attempt)
