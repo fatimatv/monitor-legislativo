@@ -11,6 +11,20 @@ ROOT = Path(__file__).parents[1]
 
 
 class DashboardTests(unittest.TestCase):
+    def test_exposes_sunass_ai_policy_as_a_regulatory_reference(self):
+        references = health.latest_references()["references"]
+        policy = next(item for item in references if item["id"] == "SUNASS-RPE-00044-2026")
+
+        self.assertEqual(policy["issuer"], "SUNASS")
+        self.assertEqual(policy["effective_on"], "2026-10-15")
+        self.assertIn("Inteligencia artificial", policy["categories"])
+        self.assertEqual(policy["url"], "/references/sunass-politica-ia-2026.pdf")
+
+    def test_dashboard_has_a_separate_regulatory_references_section(self):
+        source = (ROOT / "api" / "health.py").read_text(encoding="utf-8")
+
+        self.assertIn("Referentes regulatorios", source)
+
     def test_dashboard_keeps_current_legislative_period_initiatives(self):
         self.assertEqual(health.DASHBOARD_LOOKBACK_DAYS, 90)
 
