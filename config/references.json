@@ -1,0 +1,22 @@
+{
+  "references": [
+    {
+      "id": "SUNASS-RPE-00044-2026",
+      "kind": "Política institucional",
+      "issuer": "SUNASS",
+      "title": "Política institucional del uso seguro, responsable y ético de los sistemas basados en inteligencia artificial en la SUNASS",
+      "approval": "Resolución de Presidencia Ejecutiva N.° 00044-2026-SUNASS-PE",
+      "approved_on": "2026-10-14",
+      "effective_on": "2026-10-15",
+      "code": "GDI-DES-PI008 · Versión 001",
+      "categories": [
+        "Inteligencia artificial",
+        "Gobierno digital",
+        "Datos y privacidad",
+        "Derechos digitales"
+      ],
+      "summary": "Establece compromisos de uso seguro, responsable, ético, sostenible y centrado en las personas; gestión del ciclo de vida de IA; protección de datos; transparencia, explicabilidad, trazabilidad y supervisión humana.",
+      "url": "/references/sunass-politica-ia-2026.pdf"
+    }
+  ]
+}

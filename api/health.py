@@ -20,8 +20,19 @@ from legislative_monitor.normalization import attach_detail
 
 
 IALAW_LOGO = ROOT / "assets" / "ialaw-horizontal-blue-bg.png"
+SUNASS_POLICY_PDF = ROOT / "assets" / "references" / "sunass-politica-ia-2026.pdf"
 TOPICS_PATH = ROOT / "config" / "topics.json"
+REFERENCES_PATH = ROOT / "config" / "references.json"
 DASHBOARD_LOOKBACK_DAYS = 90
+
+
+def latest_references() -> dict:
+    with REFERENCES_PATH.open(encoding="utf-8") as source:
+        data = json.load(source)
+    references = data.get("references")
+    if not isinstance(references, list):
+        raise ValueError("references.json debe contener una lista 'references'.")
+    return {"references": references}
 
 
 def latest_projects() -> dict:
@@ -57,6 +68,20 @@ LANDING_PAGE = r"""<!doctype html><html lang="es"><head><meta charset="utf-8"><m
 let data=[],showAll=false;const el=id=>document.getElementById(id);const esc=v=>String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function card(p){const tags=p.tags.map(t=>'<span class="tag">'+esc(t)+'</span>').join('')||'<span class="tag neutral">Sin clasificación digital</span>';return '<article class="project"><div class="meta"><span>'+esc(p.date||'Sin fecha')+'</span><span>'+esc(p.status||'—')+'</span></div><h2>'+esc(p.title)+'</h2><div>'+tags+'</div><p class="mono">'+esc(p.id)+'</p><a href="'+esc(p.url)+'" target="_blank" rel="noopener">Ver expediente oficial ↗</a></article>'}function scopeCopy(){el('scope').textContent=showAll?'Ver solo señal digital':'Ver todas';el('scope').setAttribute('aria-pressed',String(showAll));el('scope-hint').textContent=showAll?'Mostrando todas las iniciativas recientes, incluidas las que están fuera del alcance digital.':'Mostrando solo iniciativas con señal digital.'}function render(){const q=el('search').value.toLowerCase(),topic=el('topic').value;const shown=data.filter(p=>(showAll||p.tags.length)&&JSON.stringify(p).toLowerCase().includes(q)&&(!topic||p.tags.includes(topic)));el('metric-loaded').textContent=data.length;el('metric-relevant').textContent=data.filter(p=>p.tags.length).length;el('results').innerHTML=shown.length?shown.map(card).join(''):'<div class="empty">No hay iniciativas con señal digital que coincidan con este filtro.</div>'}async function load(){el('system-status').textContent='● ACTUALIZANDO';el('results').innerHTML='<div class="empty">Consultando la fuente oficial…</div>';try{const r=await fetch('/api/projects');if(!r.ok)throw Error();const payload=await r.json();data=payload.projects;el('metric-total').textContent=payload.total;const topics=[...new Set(data.flatMap(p=>p.tags))];el('topic').innerHTML='<option value="">Todas las categorías</option>'+topics.map(t=>'<option>'+esc(t)+'</option>').join('');scopeCopy();render();el('system-status').textContent='● FUENTE ACTUALIZADA'}catch{el('system-status').textContent='● FUENTE NO DISPONIBLE';el('results').innerHTML='<div class="empty">No fue posible consultar el Congreso en este momento. Intenta actualizar.</div>'}}el('search').addEventListener('input',render);el('topic').addEventListener('change',render);el('scope').addEventListener('click',()=>{showAll=!showAll;scopeCopy();render()});el('reload').addEventListener('click',load);load();
 </script></body></html>"""
 
+LANDING_PAGE = LANDING_PAGE.replace(
+    '<section class="metrics" aria-label="Métricas">',
+    '<section aria-labelledby="references-title"><h2 id="references-title">Referentes regulatorios</h2><p class="hint">Instrumentos públicos relevantes para la gobernanza digital.</p><div id="references" class="rail"><div class="empty">Cargando referentes regulatorios…</div></div></section><section class="metrics" aria-label="Métricas">',
+)
+LANDING_PAGE = LANDING_PAGE.replace(
+    "</body></html>",
+    r"""<script>
+const refEsc=v=>String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function referenceCard(reference){const tags=(reference.categories||[]).map(tag=>'<span class="tag">'+refEsc(tag)+'</span>').join('');return '<article class="project"><div class="meta"><span>'+refEsc(reference.kind)+'</span><span>Vigente desde '+refEsc(reference.effective_on)+'</span></div><h2>'+refEsc(reference.title)+'</h2><p class="hint">'+refEsc(reference.issuer)+' · '+refEsc(reference.approval)+'</p><div>'+tags+'</div><p class="hint">'+refEsc(reference.summary)+'</p><a href="'+refEsc(reference.url)+'" target="_blank" rel="noopener">Ver política oficial ↗</a></article>'}
+async function loadReferences(){const target=document.getElementById('references');try{const response=await fetch('/api/references');if(!response.ok)throw Error();const payload=await response.json();target.innerHTML=payload.references.map(referenceCard).join('')||'<div class="empty">No hay referentes regulatorios registrados.</div>'}catch{target.innerHTML='<div class="empty">No fue posible cargar los referentes regulatorios.</div>'}}
+loadReferences();
+</script></body></html>""",
+)
+
 
 class handler(BaseHTTPRequestHandler):
     def _json(self, payload: dict, status: int = 200, cache: str = "no-store") -> None:
@@ -79,8 +104,14 @@ class handler(BaseHTTPRequestHandler):
         if path == "/brand/ialaw-horizontal-blue-bg.png":
             self._asset(IALAW_LOGO, "image/png")
             return
+        if path == "/references/sunass-politica-ia-2026.pdf":
+            self._asset(SUNASS_POLICY_PDF, "application/pdf")
+            return
         if path == "/api/health":
             self._json({"status": "ok", "service": "monitor-legislativo-digital", "runtime": "vercel-python", "monitoring": "dashboard uses live official metadata"})
+            return
+        if path == "/api/references":
+            self._json(latest_references(), cache="public, max-age=3600")
             return
         if path == "/api/projects":
             try:
