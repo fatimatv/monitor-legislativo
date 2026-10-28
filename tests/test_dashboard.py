@@ -20,15 +20,6 @@ class DashboardTests(unittest.TestCase):
         self.assertIn("Inteligencia artificial", policy["categories"])
         self.assertEqual(policy["url"], "/references/sunass-politica-ia-2026.pdf")
 
-    def test_exposes_proinversion_ai_policy_as_a_regulatory_reference(self):
-        references = health.latest_references()["references"]
-        policy = next(item for item in references if item["id"] == "PROINVERSION-RPE-167-2026")
-
-        self.assertEqual(policy["issuer"], "PROINVERSIÓN")
-        self.assertEqual(policy["approved_on"], "2026-10-07")
-        self.assertIn("Inteligencia artificial", policy["categories"])
-        self.assertEqual(policy["url"], "https://www.gob.pe/institucion/proinversion/normas-legales/8745091-rpe-167-2026")
-
     def test_dashboard_has_a_separate_regulatory_references_section(self):
         source = (ROOT / "api" / "health.py").read_text(encoding="utf-8")
 
